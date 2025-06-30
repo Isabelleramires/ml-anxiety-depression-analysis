@@ -1,0 +1,28 @@
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+df_modelo = df[[
+ 'Sleep_Hours', 'Physical_Activity_Hrs', 'Social_Support_Score',
+ 'Stress_Level', 'Self_Esteem_Score', 'Depression_Score'
+]].dropna()
+
+df_modelo['depressao'] = df_modelo['Depression_Score'].apply(lambda x: 1 if x >= 10 else 0)
+df_modelo = df_modelo.drop(columns=['Depression_Score'])
+
+X = df_modelo.drop(columns=['depressao'])
+y = df_modelo['depressao']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+modelo = DecisionTreeClassifier()
+modelo.fit(X_train, y_train)
+
+acuracia = modelo.score(X_test, y_test)
+print("Acurácia:", acuracia * 100, "%")
+
+novo = [[6.0, 0.5, 2, 7, 5]]
+pred = modelo.predict(novo)
+
+print("Predição:", pred[0])
+print("Resultado:", "Com depressão" if pred[0] == 1 else "Sem depressão")
